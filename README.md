@@ -8,7 +8,7 @@ ui - frontend
 
 server - backend
 
-### Arquitetura
+### Arquitetura Backend
 
 Uma possível solução para o problema descrito nesse desafio é a utilização da "Clean Architecture" onde temos
 as principais camadas conforme a imagem a seguir:
