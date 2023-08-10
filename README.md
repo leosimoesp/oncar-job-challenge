@@ -2,13 +2,7 @@
 
 Mono repo para o desenvolvimento do projeto do oncar-job-challenge
 
-Essa aplicação é dividida em dois artefatos, sendo:
-
-ui - frontend
-
-server - backend
-
-### Arquitetura Backend
+### Arquitetura
 
 Uma possível solução para o problema descrito nesse desafio é a utilização da "Clean Architecture" onde temos
 as principais camadas conforme a imagem a seguir:
