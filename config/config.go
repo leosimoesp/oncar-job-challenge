@@ -10,7 +10,8 @@ import (
 )
 
 type Config struct {
-	Database Database `env:"DATABASE"`
+	AppServerPort string   `env:"PORT,required"`
+	Database      Database `env:"DATABASE"`
 }
 
 type Database struct {
