@@ -27,3 +27,14 @@ Domain - Camada que inclui:
 Models: objetos/estruturas utilizados no request e response. Muitas vezes podems ser chamados de DTO(Data transfer object).
 Entities: objetos/estruturas utilizados nas operações diretas com o banco de dados.
 Interfaces: utilizadas pelas camadas de usecases e repositories.
+
+Erro ao executar os testes:
+
+leonardo@workstation:~/git/oncar-job-challenge$ go test ./...
+pattern ./...: open /home/leonardo/git/oncar-job-challenge/postgres/data: permission denied
+
+Solução 1: alterar a permissão da pasta postgres (volume local) utilizado pelo docker-compose com o comando
+
+sudo chmod -R 775 postgres
+
+Solução 2: mover a pasta postgres para outro local e criar um link simbólico na raiz do projeto com o nome de postgres
