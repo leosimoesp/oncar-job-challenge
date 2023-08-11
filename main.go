@@ -31,7 +31,7 @@ func main() {
 	e.Use(middleware.Recover())
 
 	// Routes api
-	route.SetupApiRoutes(cfg, e)
+	route.SetupApiRoutes(cfg, dbPool, e)
 
 	//Routes webApp
 	setupWebRoutes(e)
