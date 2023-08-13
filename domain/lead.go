@@ -55,10 +55,12 @@ func (lr *LeadRequest) clear() {
 	lr.Name = name
 }
 
-type LeadRepository interface {
-	Save(ctx context.Context, lead Lead) error
-}
-
 type LeadUsecase interface {
 	Save(ctx context.Context, lead LeadRequest) error
+	FindByVehicle(ctx context.Context, vehicleID string) ([]Lead, error)
+}
+
+type LeadRepository interface {
+	Save(ctx context.Context, lead Lead) error
+	FindByVehicle(ctx context.Context, vehicleID uuid.UUID) ([]Lead, error)
 }
