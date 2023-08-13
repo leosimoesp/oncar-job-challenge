@@ -20,7 +20,9 @@ func NewLeadRepository(db *pgxpool.Pool) domain.LeadRepository {
 
 // Save implements domain.LeadRepository.
 func (lr leadRepository) Save(ctx context.Context, lead domain.Lead) error {
-	query := `insert into lead(name, email, phone, vehicle_id) values($1, $2, $3, $4)`
+	query := `insert into lead(name, email, phone, vehicle_id) values($1, $2, $3, $4) 
+	on conflict(vehicle_id, email) do nothing;
+	`
 	_, err := lr.db.Exec(ctx, query, lead.Name, lead.Email, lead.Phone, lead.VehicleID)
 
 	return err
