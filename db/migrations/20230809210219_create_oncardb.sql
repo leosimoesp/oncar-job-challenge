@@ -1,5 +1,6 @@
 -- +goose Up
 -- +goose StatementBegin
+BEGIN;
 CREATE TABLE IF NOT EXISTS vehicle(
     id uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
     brand VARCHAR(150) NOT NULL,
@@ -21,14 +22,16 @@ CREATE TABLE IF NOT EXISTS lead(
     updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 ALTER TABLE IF EXISTS lead OWNER TO oncarapp;
-
+COMMIT;
 
 -- +goose StatementEnd
 
 -- +goose Down
 -- +goose StatementBegin
+BEGIN;
 DROP TABLE lead;
 DROP TABLE vehicle;
+COMMIT;
 -- +goose StatementEnd
 
 
