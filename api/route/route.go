@@ -9,4 +9,5 @@ import (
 func SetupApiRoutes(cfg config.Config, db *pgxpool.Pool, e *echo.Echo) {
 	apiGroup := e.Group("/api")
 	NewVehicleRouter(cfg, db, apiGroup)
+	NewLeadRouter(cfg, db, apiGroup)
 }
