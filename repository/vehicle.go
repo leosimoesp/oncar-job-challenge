@@ -26,7 +26,7 @@ func (v vehicleRepository) Find(ctx context.Context, params domain.FindParams) (
 	rows, err := v.db.Query(ctx, query)
 
 	if err != nil {
-		return []domain.Vehicle{}, err
+		return vehicles, err
 	}
 	defer rows.Close()
 

@@ -15,4 +15,5 @@ func NewLeadRouter(cfg config.Config, db *pgxpool.Pool, group *echo.Group) {
 		LeadUsecase: usecase.NewLeadUsecase(cfg, vr),
 	}
 	group.POST("/leads", vc.Save)
+	group.GET("/leads/:vehicleId", vc.FindByVehicle)
 }

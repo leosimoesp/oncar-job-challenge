@@ -45,3 +45,27 @@ func succesWhenSaveLead(t *testing.T) {
 	})
 	assert.Nil(t, err)
 }
+
+func Test_leadUsecase_FindByVehicle(t *testing.T) {
+	succesWhenFindLeadsVehicle(t)
+	dbErrorFindLeadsVehicle(t)
+}
+
+func dbErrorFindLeadsVehicle(t *testing.T) {
+	repo := &mocks.LeadRepositoryMock{}
+	repo.On("FindByVehicle", mock.Anything, mock.Anything).Return([]domain.Lead{}, errors.New("db error"))
+	usecase := NewLeadUsecase(config.Config{}, repo)
+
+	_, err := usecase.FindByVehicle(context.TODO(), "6ba7b810-9dad-11d1-80b4-00c04fd430c8")
+	assert.NotNil(t, err)
+	assert.Equal(t, "db error", err.Error())
+}
+
+func succesWhenFindLeadsVehicle(t *testing.T) {
+	repo := &mocks.LeadRepositoryMock{}
+	repo.On("FindByVehicle", mock.Anything, mock.Anything).Return([]domain.Lead{}, nil)
+	usecase := NewLeadUsecase(config.Config{}, repo)
+
+	_, err := usecase.FindByVehicle(context.TODO(), "6ba7b810-9dad-11d1-80b4-00c04fd430c8")
+	assert.Nil(t, err)
+}

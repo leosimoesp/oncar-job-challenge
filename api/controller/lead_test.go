@@ -8,6 +8,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/gofrs/uuid"
 	"github.com/labstack/echo/v4"
 	"github.com/leosimoesp/oncar-job-challenge/domain"
 	"github.com/leosimoesp/oncar-job-challenge/domain/mocks"
@@ -145,5 +146,111 @@ func TestLeadController_Save(t *testing.T) {
 
 		assert.Equal(t, http.StatusInternalServerError, rec.Code)
 		assert.Equal(t, expectedErr.Error()+"\n", err.Error())
+	})
+}
+
+func TestLeadController_FindByVehicle(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		rec := httptest.NewRecorder()
+
+		expectedResult := []domain.Lead{
+			{
+				Name:      "José",
+				Email:     "jse@gmail.com",
+				Phone:     "11977415474",
+				VehicleID: uuid.FromStringOrNil("6ba7b810-9dad-11d1-80b4-00c04fd430c8"),
+			},
+		}
+
+		leadUsecase := mocks.LeadUsecaseMock{}
+		leadUsecase.On("FindByVehicle", mock.Anything, mock.Anything).Return(expectedResult, nil)
+
+		lc := LeadController{
+			LeadUsecase: &leadUsecase,
+		}
+
+		e := echo.New()
+
+		req := httptest.NewRequest(http.MethodGet, "/api/", nil)
+		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+		echoCtx := e.NewContext(req, rec)
+		echoCtx.SetPath("leads/:vehicleId")
+		echoCtx.SetParamNames("vehicleId")
+		echoCtx.SetParamValues("6ba7b810-9dad-11d1-80b4-00c04fd430c8")
+
+		grApi := e.Group("/api")
+		grApi.GET("/leads", lc.FindByVehicle)
+
+		err := lc.FindByVehicle(echoCtx)
+		assert.Nil(t, err)
+
+		expectedResultAsJson, _ := json.Marshal(expectedResult)
+		assert.Equal(t, http.StatusOK, rec.Code)
+		assert.Equal(t, string(expectedResultAsJson)+"\n", rec.Body.String())
+	})
+
+	t.Run("invalid_request_error", func(t *testing.T) {
+		rec := httptest.NewRecorder()
+
+		expectedResult := []domain.Lead{
+			{
+				Name:      "José",
+				Email:     "jse@gmail.com",
+				Phone:     "11977415474",
+				VehicleID: uuid.FromStringOrNil("6ba7b810-9dad-11d1-80b4-00c04fd430c8"),
+			},
+		}
+
+		leadUsecase := mocks.LeadUsecaseMock{}
+		leadUsecase.On("FindByVehicle", mock.Anything, mock.Anything).Return(expectedResult, nil)
+
+		lc := LeadController{
+			LeadUsecase: &leadUsecase,
+		}
+
+		e := echo.New()
+
+		req := httptest.NewRequest(http.MethodGet, "/api/", nil)
+		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+		echoCtx := e.NewContext(req, rec)
+		echoCtx.SetPath("leads/:vehicleId")
+
+		grApi := e.Group("/api")
+		grApi.GET("/leads", lc.FindByVehicle)
+
+		err := lc.FindByVehicle(echoCtx)
+		assert.NotNil(t, err)
+		assert.Equal(t, "code=400, message=vehicleId not found in path", err.Error())
+	})
+
+	t.Run("err_when_call_usecase", func(t *testing.T) {
+		rec := httptest.NewRecorder()
+
+		expectedResult := []domain.Lead{}
+
+		leadUsecase := mocks.LeadUsecaseMock{}
+		leadUsecase.On("FindByVehicle", mock.Anything, mock.Anything).Return(expectedResult, errors.New("db timeout"))
+
+		lc := LeadController{
+			LeadUsecase: &leadUsecase,
+		}
+
+		e := echo.New()
+
+		req := httptest.NewRequest(http.MethodGet, "/api/", nil)
+		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+		echoCtx := e.NewContext(req, rec)
+		echoCtx.SetPath("leads/:vehicleId")
+		echoCtx.SetParamNames("vehicleId")
+		echoCtx.SetParamValues("6ba7b810-9dad-11d1-80b4-00c04fd430c8")
+
+		grApi := e.Group("/api")
+		grApi.GET("/leads", lc.FindByVehicle)
+
+		err := lc.FindByVehicle(echoCtx)
+		assert.NotNil(t, err)
+
+		assert.Equal(t, http.StatusInternalServerError, rec.Code)
+		assert.Equal(t, "{\"message\":\"Internal Server Error\"}\n", rec.Body.String())
 	})
 }
