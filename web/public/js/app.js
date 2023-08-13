@@ -9,7 +9,6 @@ const listVehicles = async () => {
       const vehicles = response.data;
       let li = `<tr><th>Marca</th><th>Modelo</th><th>Ano</th><th>Preço</th><th>Cmd</th></tr>`;
       vehicles.forEach((vehicle) => {
-        //const data = JSON.stringify(vehicle);
         const data = btoa(JSON.stringify(vehicle));
         const button = `<button onclick="listLeads('${data}');">leads</button>`;
         li += `<tr>
@@ -21,6 +20,27 @@ const listVehicles = async () => {
         </tr>`;
       });
       document.getElementById('tab-vehicles').innerHTML = li;
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+};
+
+const saveLead = async (e) => {
+  e.preventDefault();
+  const form = Object.fromEntries(new FormData(e.target).entries());
+
+  const lead = {};
+  lead.vehicleId = form.leadVehicleId;
+  lead.email = form.email;
+  lead.name = form.name;
+  lead.phone = form.phone;
+
+  await axios
+    .post(`${serverUrl}/leads`, lead)
+    .then(function (response) {
+      const status = response.status;
+      console.log('Sucesso=>', status);
     })
     .catch(function (error) {
       console.log(error);
@@ -70,13 +90,15 @@ const listLeads = async (vehicle) => {
     </tr>`;
     document.getElementById('tab-leads').innerHTML = li;
   });
+  document.getElementById('fvehicleid').value = parsed.id;
+  const form = document.getElementById('flead');
+  form.addEventListener('submit', saveLead);
 };
 
 const showForm = (formId, firstInputId) => {
   document.getElementById(formId).style.display = 'block';
   if (firstInputId) {
     document.getElementById(firstInputId).focus();
-    validateFormLead();
   }
 };
 
@@ -84,6 +106,14 @@ const isValidEmail = (email) => {
   const re =
     /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   return re.test(String(email).toLowerCase());
+};
+
+const isValidPhone = (phone) => {
+  const value = phone.replaceAll(' ', '');
+  const onlyNumbers = new RegExp('^[0-9]+$');
+  const validOnlyNums = onlyNumbers.test(value);
+  const size = value.length;
+  return size <= 11 && size > 9 && validOnlyNums;
 };
 
 const setError = (element, message) => {
@@ -105,9 +135,57 @@ const setSuccess = (element) => {
 };
 
 const validateFormLead = () => {
-  const nameValue = document.getElementById('fname').value.trim();
-  const emailValue = document.getElementById('femail').value.trim();
-  const phoneValue = document.getElementById('fphone').value.trim();
+  const elemName = document.getElementById('fname');
+  const nameValue = elemName.value.trim();
+  const elemEmail = document.getElementById('femail');
+  const emailValue = elemEmail.value.trim();
+  const elemPhone = document.getElementById('fphone');
+  const phoneValue = elemPhone.value.trim();
+  let hasErrors = document.getElementById('fsubmit').disabled;
 
-  setError(document.getElementById('fname'), 'Username is required');
+  if (nameValue === '') {
+    setError(elemName, 'Nome é obrigatório');
+    hasErrors = true;
+  } else {
+    setSuccess(elemName);
+    hasErrors = false;
+  }
+
+  if (emailValue === '') {
+    setError(elemEmail, 'E-mail é obrigatório');
+    hasErrors = true;
+  } else {
+    setSuccess(elemEmail);
+    hasErrors = false;
+  }
+
+  if (emailValue !== '' && !isValidEmail(emailValue)) {
+    setError(elemEmail, 'E-mail é inválido');
+    hasErrors = true;
+  } else if (emailValue !== '') {
+    setSuccess(elemEmail);
+    hasErrors = false;
+  }
+
+  if (phoneValue === '') {
+    setError(elemPhone, 'Telefone é obrigatório');
+    hasErrors = true;
+  } else {
+    setSuccess(elemPhone);
+    hasErrors = false;
+  }
+
+  if (phoneValue !== '' && !isValidPhone(phoneValue)) {
+    setError(elemPhone, 'Telefone é inválido');
+    hasErrors = true;
+  } else if (phoneValue !== '') {
+    setSuccess(elemPhone);
+    hasErrors = false;
+  }
+
+  if (!hasErrors) {
+    document.getElementById('fsubmit').disabled = false;
+  } else {
+    document.getElementById('fsubmit').disabled = true;
+  }
 };
