@@ -1,2 +1,51 @@
 <table id="tab-vehicles"></table>
-<h2>Lista de Veículos</h2>
+<div id="vehicle-leads"></div>
+
+<div id="lead-container" class="container" style="width: 50%; display: none">
+  <div style="width: 50%">
+    <form id="flead" action="/action_page.php">
+      <div class="input-validation">
+        <label for="fname">Nome <span class="required">(*)</span></label>
+        <input
+          type="text"
+          id="fname"
+          name="name"
+          required
+          placeholder="Digite o nome.."
+        />
+        <div class="error"></div>
+      </div>
+
+      <div class="input-validation">
+        <label for="femail">E-mail <span class="required">(*)</span></label>
+        <input
+          type="text"
+          id="femail"
+          name="email"
+          required
+          placeholder="Digite o e-mail.."
+        />
+        <div class="error"></div>
+      </div>
+
+      <div class="input-validation">
+        <label for="fphone">Telefone <span class="required">(*)</span></label>
+        <input
+          type="text"
+          id="fphone"
+          required
+          pattern="\([0-9]{2}\) [0-9]{4,6}-[0-9]{3,4}$"
+          name="phone"
+          placeholder="Digite o telefone.."
+        />
+        <div class="error"></div>
+      </div>
+
+      <center>
+        <input id="fsubmit" disabled="true" type="submit" value="Salvar" />
+      </center>
+    </form>
+  </div>
+</div>
+
+<table id="tab-leads"></table>
