@@ -8,11 +8,12 @@ import (
 
 // Price in cents
 type Vehicle struct {
-	Brand string    `json:"brand"`
-	Model string    `json:"model"`
-	Year  int       `json:"year"`
-	Price int64     `json:"price"`
-	ID    uuid.UUID `json:"id"`
+	Brand    string    `json:"brand"`
+	Model    string    `json:"model"`
+	FmtPrice string    `json:"fmtPrice"`
+	Year     int       `json:"year"`
+	Price    int64     `json:"price"`
+	ID       uuid.UUID `json:"id"`
 }
 
 type FindParams struct {

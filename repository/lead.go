@@ -6,6 +6,7 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/leosimoesp/oncar-job-challenge/domain"
+	"github.com/leosimoesp/oncar-job-challenge/pkg/input"
 )
 
 type leadRepository struct {
@@ -48,6 +49,8 @@ func (lr leadRepository) FindByVehicle(ctx context.Context, vehicleID uuid.UUID)
 		if err != nil {
 			return leads, err
 		}
+		phoneMasked := input.AddPhoneMask(lead.Phone)
+		lead.Phone = phoneMasked
 		leads = append(leads, lead)
 	}
 	return leads, nil
