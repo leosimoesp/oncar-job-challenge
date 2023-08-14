@@ -47,7 +47,7 @@ func TestLeadController_Save(t *testing.T) {
 		grApi.POST("/leads", lc.Save)
 		e.ServeHTTP(rec, req)
 
-		assert.Equal(t, http.StatusOK, rec.Code)
+		assert.Equal(t, http.StatusCreated, rec.Code)
 		assert.Equal(t, "", rec.Body.String())
 	})
 
@@ -70,7 +70,7 @@ func TestLeadController_Save(t *testing.T) {
 		grApi.POST("/leads", lc.Save)
 		e.ServeHTTP(rec, req)
 
-		jsonMsgErr, _ := json.Marshal(domain.MsgErr{Message: "unexpected EOF"})
+		jsonMsgErr, _ := json.Marshal(domain.MsgErr{Message: "code=400, message=unexpected EOF, internal=unexpected EOF"})
 		expectedErr := errors.New(string(jsonMsgErr))
 
 		err := errors.New(rec.Body.String())

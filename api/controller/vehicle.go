@@ -17,8 +17,7 @@ func (vc VehicleController) Find(c echo.Context) error {
 	var params domain.FindParams
 
 	if err := c.Bind(&params); err != nil {
-		c.Error(err)
-		return err
+		return echo.NewHTTPError(http.StatusBadRequest, err)
 	}
 
 	vehicles, err := vc.VehicleUsecase.Find(ctx, params)

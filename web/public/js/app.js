@@ -36,14 +36,27 @@ const saveLead = async (e) => {
   lead.name = form.name;
   lead.phone = form.phone;
 
+  const submitSuccess = document.querySelector('.submit-success');
+  const submitError = document.querySelector('.submit-error');
+
   await axios
     .post(`${serverUrl}/leads`, lead)
     .then(function (response) {
       const status = response.status;
-      console.log('Sucesso=>', status);
+
+      if (status === 201) {
+        submitSuccess.style.display = 'block';
+        clearForm('flead');
+      }
     })
     .catch(function (error) {
       console.log(error);
+      submitError.style.display = 'block';
+      if (error.response.data.message) {
+        submitError.innerHTML = `<p class="submit-error-text">${error.response.data.message}</p>`;
+      } else {
+        submitError.innerHTML = `<p class="submit-error-text">Ocorreu um erro. Entre em contato</p>`;
+      }
     });
 };
 
@@ -95,7 +108,12 @@ const listLeads = async (vehicle) => {
   form.addEventListener('submit', saveLead);
 };
 
+const clearForm = (form) => {
+  document.getElementById(form).reset();
+};
+
 const showForm = (formId, firstInputId) => {
+  clearForm('flead');
   document.getElementById(formId).style.display = 'block';
   if (firstInputId) {
     document.getElementById(firstInputId).focus();

@@ -71,7 +71,7 @@ func TestVehicleController_Find(t *testing.T) {
 		grApi.POST("/vehicles", vc.Find)
 		e.ServeHTTP(rec, req)
 
-		jsonMsgErr, _ := json.Marshal(domain.MsgErr{Message: "unexpected EOF"})
+		jsonMsgErr, _ := json.Marshal(domain.MsgErr{Message: "code=400, message=unexpected EOF, internal=unexpected EOF"})
 		expectedErr := errors.New(string(jsonMsgErr))
 
 		err := errors.New(rec.Body.String())

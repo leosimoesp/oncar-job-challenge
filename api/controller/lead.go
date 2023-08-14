@@ -17,8 +17,7 @@ func (lc LeadController) Save(c echo.Context) error {
 	var leadReq domain.LeadRequest
 
 	if err := c.Bind(&leadReq); err != nil {
-		c.Error(err)
-		return err
+		return echo.NewHTTPError(http.StatusBadRequest, err)
 	}
 	if e := leadReq.Validate(); e != nil {
 		return c.JSON(http.StatusUnprocessableEntity, e)
@@ -28,7 +27,7 @@ func (lc LeadController) Save(c echo.Context) error {
 		c.Error(err)
 		return err
 	}
-	return c.NoContent(http.StatusOK)
+	return c.NoContent(http.StatusCreated)
 }
 
 func (lc LeadController) FindByVehicle(c echo.Context) error {
