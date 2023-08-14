@@ -5,6 +5,7 @@ import (
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/leosimoesp/oncar-job-challenge/domain"
+	"github.com/leosimoesp/oncar-job-challenge/pkg/input"
 )
 
 type vehicleRepository struct {
@@ -36,6 +37,7 @@ func (v vehicleRepository) Find(ctx context.Context, params domain.FindParams) (
 		if err != nil {
 			return vehicles, err
 		}
+		vehicle.FmtPrice = input.AddCurrencyMask(vehicle.Price)
 		vehicles = append(vehicles, vehicle)
 	}
 	return vehicles, nil

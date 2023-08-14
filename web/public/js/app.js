@@ -15,7 +15,7 @@ const listVehicles = async () => {
           <td>${vehicle.brand}</td>
           <td>${vehicle.model} </td>
           <td>${vehicle.year}</td>
-          <td>${vehicle.price}</td>
+          <td>${vehicle.fmtPrice}</td>
           <td>${button}</td>
         </tr>`;
       });
@@ -74,10 +74,10 @@ const getVehicleLeads = async (vehicleId) => {
     .catch(function (error) {
       console.log(error);
     });
-  console.log(leads);
+
   let li = `<tr><th>Nome</th><th>E-mail</th><th>Telefone</th><th>Ação</th></tr>`;
   leads.forEach((lead) => {
-    const btnRemove = `<button>excluir</button>`;
+    const btnRemove = `<button onclick="alert('@TODO')">excluir</button>`;
     li += `<tr>
       <td>${lead.name}</td>
       <td>${lead.email} </td>
@@ -94,7 +94,7 @@ const listLeads = async (vehicle) => {
     <div>Marca: ${parsed.brand}</div>
     <div>Model: ${parsed.model}</div>
     <div>Ano: ${parsed.year}</div>
-    <div>Preço: ${parsed.price}</div>
+    <div>Preço: ${parsed.fmtPrice}</div>
     <br/>
     <div><center><h2>Leads</h2></center></div>
     <div class="button-container">
