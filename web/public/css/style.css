@@ -72,3 +72,23 @@ input[type=submit]:disabled {
     height: 13px;
 }
 
+.submit-success {
+  display: none;
+  color: #04AA6D;
+}
+
+.submit-success[data-submit="success"] {
+  display: block;
+}
+
+.submit-error {
+  display: none;
+}
+
+.submit-error[data-submit="error"] {
+  display: block;
+}
+
+.submit-error-text {
+    color: #ff3860;
+}
