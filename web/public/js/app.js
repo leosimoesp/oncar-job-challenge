@@ -7,7 +7,7 @@ const listVehicles = async () => {
     .post(`${serverUrl}/vehicles`)
     .then(function (response) {
       const vehicles = response.data;
-      let li = `<tr><th>Marca</th><th>Modelo</th><th>Ano</th><th>Preço</th><th>Cmd</th></tr>`;
+      let li = `<tr><th>Marca</th><th>Modelo</th><th>Ano</th><th>Preço</th><th>Ação</th></tr>`;
       vehicles.forEach((vehicle) => {
         const data = btoa(JSON.stringify(vehicle));
         const button = `<button onclick="listLeads('${data}');">leads</button>`;
@@ -45,54 +45,37 @@ const saveLead = async (e) => {
       const status = response.status;
 
       if (status === 201) {
+        submitError.style.display = 'none';
         submitSuccess.style.display = 'block';
+        getVehicleLeads(lead.vehicleId);
         clearForm('flead');
       }
     })
     .catch(function (error) {
+      submitSuccess.style.display = 'none';
       console.log(error);
       submitError.style.display = 'block';
       if (error.response.data.message) {
         submitError.innerHTML = `<p class="submit-error-text">${error.response.data.message}</p>`;
       } else {
-        submitError.innerHTML = `<p class="submit-error-text">Ocorreu um erro. Entre em contato</p>`;
+        submitError.innerHTML = `<p class="submit-error-text">${JSON.stringify(
+          error.response.data
+        )}</p>`;
       }
     });
 };
 
-(function () {
-  function init() {
-    var router = new Router([
-      new Route('list-vehicles', 'vehicle/list.html', true),
-    ]);
-  }
-  init();
-  document.addEventListener('DOMContentLoaded', listVehicles());
-})();
-
-const listLeads = async (vehicle) => {
-  const parsed = JSON.parse(atob(vehicle));
-
-  let div = `
-    <div>Marca: ${parsed.brand}</div>
-    <div>Model: ${parsed.model}</div>
-    <div>Ano: ${parsed.year}</div>
-    <div>Preço: ${parsed.price}</div>
-    <br/>
-    <div><center><h2>Leads</h2></center></div>
-    <div><center><button onclick="showForm('lead-container','fname');">novo</button></center></div>
-  `;
-  document.getElementById('tab-vehicles').style.display = 'none';
-  document.getElementById('vehicle-leads').innerHTML = div;
-
-  const leads = [];
-  leads.push({
-    name: 'Lucas',
-    email: 'lucas@gmail.com',
-    phone: '11999999999',
-  });
-
-  let li = `<tr><th>Nome</th><th>E-mail</th><th>Telefone</th><th>Cmd</th></tr>`;
+const getVehicleLeads = async (vehicleId) => {
+  const leads = await axios
+    .get(`${serverUrl}/leads/${vehicleId}`)
+    .then(function (response) {
+      return response.data;
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+  console.log(leads);
+  let li = `<tr><th>Nome</th><th>E-mail</th><th>Telefone</th><th>Ação</th></tr>`;
   leads.forEach((lead) => {
     const btnRemove = `<button>excluir</button>`;
     li += `<tr>
@@ -101,8 +84,29 @@ const listLeads = async (vehicle) => {
       <td>${lead.phone}</td>
       <td>${btnRemove}</td>
     </tr>`;
-    document.getElementById('tab-leads').innerHTML = li;
   });
+  document.getElementById('tab-leads').innerHTML = li;
+};
+
+const listLeads = async (vehicle) => {
+  const parsed = JSON.parse(atob(vehicle));
+  let div = `
+    <div>Marca: ${parsed.brand}</div>
+    <div>Model: ${parsed.model}</div>
+    <div>Ano: ${parsed.year}</div>
+    <div>Preço: ${parsed.price}</div>
+    <br/>
+    <div><center><h2>Leads</h2></center></div>
+    <div class="button-container">
+      <div class="button-inner"><button onclick="showForm('lead-container','fname');">novo</button></div>
+      <div class="button-inner"><button onclick="navigate('list-vehicles')">voltar</button></div>
+    </div>
+  `;
+  document.getElementById('tab-vehicles').style.display = 'none';
+  document.getElementById('vehicle-leads').innerHTML = div;
+
+  await getVehicleLeads(parsed.id);
+
   document.getElementById('fvehicleid').value = parsed.id;
   const form = document.getElementById('flead');
   form.addEventListener('submit', saveLead);
@@ -118,6 +122,10 @@ const showForm = (formId, firstInputId) => {
   if (firstInputId) {
     document.getElementById(firstInputId).focus();
   }
+};
+
+const navigate = (htmlName) => {
+  location.href = htmlName;
 };
 
 const isValidEmail = (email) => {
@@ -207,3 +215,17 @@ const validateFormLead = () => {
     document.getElementById('fsubmit').disabled = true;
   }
 };
+
+const closeElem = (elemId) => {
+  document.getElementById(elemId).style.display = 'none';
+};
+
+(function () {
+  function init() {
+    var router = new Router([
+      new Route('list-vehicles', 'vehicle/list.html', true),
+    ]);
+  }
+  init();
+  document.addEventListener('DOMContentLoaded', listVehicles());
+})();

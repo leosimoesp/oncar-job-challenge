@@ -33,9 +33,9 @@ func (lr leadRepository) FindByVehicle(ctx context.Context, vehicleID uuid.UUID)
 	leads := make([]domain.Lead, 0)
 
 	query := `select l.id, l.name, l.email, l.phone, l.vehicle_id
-	from lead l order by l.name
+	from lead l where l.vehicle_id = $1 order by l.name
 	`
-	rows, err := lr.db.Query(ctx, query)
+	rows, err := lr.db.Query(ctx, query, vehicleID)
 
 	if err != nil {
 		return leads, err
