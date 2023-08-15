@@ -79,16 +79,6 @@ func AddCurrencyMask(valueInCents int64) string {
 		log.Default().Printf("Erro when parse number %v\n", e)
 	}
 
-	//n := display.Tags(language.English)
-	// for _, lcode := range []string{"en_US", "pt_BR", "de", "ja", "hi"} {
-	// 	lang := language.MustParse(lcode)
-	// 	cur, _ := currency.FromTag(lang)
-	// 	scale, _ := currency.Cash.Rounding(cur) // fractional digits
-	// 	dec := number.Decimal(100000.00, number.Scale(scale))
-	// 	p := message.NewPrinter(lang)
-	// 	p.Printf("%24v (%v): %v%v\n", n.Name(lang), cur, currency.Symbol(cur), dec)
-	// }
-
 	lang := language.MustParse("pt_BR")
 	cur, _ := currency.FromTag(lang)
 	scale, _ := currency.Cash.Rounding(cur)
@@ -96,9 +86,4 @@ func AddCurrencyMask(valueInCents int64) string {
 	p := message.NewPrinter(lang)
 
 	return p.Sprintf("%v %v", currency.Symbol(cur), dec)
-
-	// p.Printf("%24v (%v): %v%v\n", n.Name(lang), cur, currency.Symbol(cur), dec)
-
-	// return ""
-
 }
